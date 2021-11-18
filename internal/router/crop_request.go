@@ -10,7 +10,7 @@ type CropRequest struct {
 	Type   string
 	Width  int
 	Height int
-	Url    string
+	URL    string
 }
 
 // NewCropRequest returns new instance of Router or false in can't parse url.
@@ -32,7 +32,7 @@ func NewCropRequest(requestURI string) (CropRequest, error) {
 	}
 
 	url := strings.Join(path[3:], "/")
-	url = sanitizeUrl(url)
+	url = sanitizeURL(url)
 
 	return CropRequest{
 		path[0],
@@ -43,7 +43,7 @@ func NewCropRequest(requestURI string) (CropRequest, error) {
 }
 
 // Clear host if request has it.
-func sanitizeUrl(url string) string {
+func sanitizeURL(url string) string {
 	url = strings.TrimPrefix(url, "http://")
 	url = strings.TrimPrefix(url, "https://")
 	url = strings.TrimPrefix(url, "http:/")

@@ -34,7 +34,7 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	srcOriginImage, err := uploader.UploadImage(request.Url, h.originImagePath, r.Header)
+	srcOriginImage, err := uploader.UploadImage(request.URL, h.originImagePath, r.Header)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't upload image", err)
 		return

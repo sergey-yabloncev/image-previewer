@@ -1,15 +1,13 @@
 package handler
 
 import (
-	"github.com/sergey-yabloncev/image-previewer/internal/router"
 	"html/template"
 	"net/http"
+
+	"github.com/sergey-yabloncev/image-previewer/internal/router"
 )
 
-type DocHandler struct {
-	originImagePath  string
-	croppedImagePath string
-}
+type DocHandler struct{}
 
 func NewDocHandler() DocHandler {
 	return DocHandler{}

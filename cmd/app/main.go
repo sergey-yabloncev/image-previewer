@@ -15,7 +15,6 @@ var (
 	croppedImagePath = path.Join("storage", "public", "cropped")
 )
 
-// http://localhost:8080/fill/200/300/raw.githubusercontent.com/OtusGolang/final_project/master/examples/image-previewer/_gopher_original_1024x504.jpg
 func main() {
 	server := http.NewServeMux()
 	server.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./storage/public"))))
