@@ -11,9 +11,9 @@ func TestMd5String(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{input: "nas-national-prod.s3.amazonaws.com/02mar2020_alafia_sunken_is_wads_red_banded_rosp_43_tp_106-compressed_1.jpg", expected: "8638ceb222b97c581d54d01aeb912f3b"},
+		{input: "compressed_1.jpg", expected: "5a670aa3b6eae0703a8ab2d1cef4b0e7d17e47cad96b95d737b9792ab43cc142"},
 		// repeat previewer
-		{input: "nas-national-prod.s3.amazonaws.com/02mar2020_alafia_sunken_is_wads_red_banded_rosp_43_tp_106-compressed_1.jpg", expected: "8638ceb222b97c581d54d01aeb912f3b"},
+		{input: "compressed_1.jpg", expected: "5a670aa3b6eae0703a8ab2d1cef4b0e7d17e47cad96b95d737b9792ab43cc142"},
 		{input: "", expected: ""},
 	}
 

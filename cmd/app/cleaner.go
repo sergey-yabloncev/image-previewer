@@ -8,8 +8,11 @@ import (
 func init() {
 	// Clear paths with cache files before start.
 	err := clearDir(originImagePath)
-	err = clearDir(croppedImagePath)
+	if err != nil {
+		log.Fatalf("error clear dir:")
+	}
 
+	err = clearDir(croppedImagePath)
 	if err != nil {
 		log.Fatalf("error clear dir:")
 	}

@@ -11,7 +11,7 @@ import (
 
 func Crop(pathImage, pathDir string, request router.CropRequest) (string, error) {
 	method := request.Type
-	filename := helpers.Md5String(request.Url)
+	filename := helpers.Md5String(request.URL)
 	croppedImage := path.Join(pathDir, fmt.Sprintf("%s_%s_%vx%v.jpg", filename, method, request.Width, request.Height))
 
 	// If file exists return cached image.
