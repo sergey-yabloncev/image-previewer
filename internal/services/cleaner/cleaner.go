@@ -7,13 +7,13 @@ import (
 )
 
 func RemoveCacheImages(originImagePath, croppedImagePath, name string) {
-	//Remove origin.
+	// Remove origin.
 	err := clearDir(originImagePath, name)
 	if err != nil {
 		log.Fatalf("error clear dir:")
 	}
 
-	//Remove cropped.
+	// Remove cropped.
 	err = clearDir(croppedImagePath, name)
 	if err != nil {
 		log.Fatalf("error clear dir:")

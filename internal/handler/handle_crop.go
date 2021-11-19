@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
-	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
+	"log"
 	"net/http"
 	"strings"
 
+	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
+	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cleaner"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/croper"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/uploader"
@@ -47,7 +48,7 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Generate cropped image.
-	outImage, err := croper.Crop(srcOriginImage, fileName, h.croppedImagePath, request)
+	outImage, err := croper.Crop(srcOriginImage, h.croppedImagePath, fileName, request)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't crop image", err)
 		return
@@ -55,9 +56,10 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Set image to cache.
 	_, removedImage := h.cache.Set(cache.Key(fileName), "")
-	//If we have removed item, we're removing from disk with cropped images
+	// If we have removed item, we're removing from disk with cropped images
 	if removedImage != "" {
-		cleaner.RemoveCacheImages(h.originImagePath, h.croppedImagePath, fileName)
+		log.Println("Images was removed:", removedImage)
+		cleaner.RemoveCacheImages(h.originImagePath, h.croppedImagePath, string(removedImage))
 	}
 
 	http.ServeFile(w, r, outImage)

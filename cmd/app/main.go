@@ -21,7 +21,7 @@ func main() {
 	server.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./storage/public"))))
 
 	rootHandler := handler.New(
-		handler.NewCropHandler(originImagePath, croppedImagePath, cache.NewCache(10)),
+		handler.NewCropHandler(originImagePath, croppedImagePath, cache.NewCache(2)),
 		handler.NewDocHandler(),
 	)
 
