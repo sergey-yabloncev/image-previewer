@@ -12,8 +12,7 @@ import (
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 )
 
-func UploadImage(url, pathDir string, header http.Header) (string, error) {
-	filename := helpers.Md5String(url)
+func UploadImage(url, filename, pathDir string, header http.Header) (string, error) {
 	imagePath := path.Join(pathDir, filename+".jpg")
 
 	// If file exists return cached image.

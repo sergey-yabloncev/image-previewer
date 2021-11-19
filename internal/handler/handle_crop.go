@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
+	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"net/http"
 	"strings"
 
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
+	"github.com/sergey-yabloncev/image-previewer/internal/services/cleaner"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/croper"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/uploader"
 )
@@ -12,12 +15,14 @@ import (
 type CropHandler struct {
 	originImagePath  string
 	croppedImagePath string
+	cache            cache.Cache
 }
 
-func NewCropHandler(originImagePath, croppedImagePath string) CropHandler {
+func NewCropHandler(originImagePath, croppedImagePath string, cache cache.Cache) CropHandler {
 	return CropHandler{
 		originImagePath,
 		croppedImagePath,
+		cache,
 	}
 }
 
@@ -33,17 +38,26 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		router.HTTPBadRequest(w, "Can't parse parameters", err)
 		return
 	}
-
-	srcOriginImage, err := uploader.UploadImage(request.URL, h.originImagePath, r.Header)
+	// Generate new uniq name.
+	fileName := helpers.Md5String(request.URL)
+	// Upload image.
+	srcOriginImage, err := uploader.UploadImage(request.URL, fileName, h.originImagePath, r.Header)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't upload image", err)
 		return
 	}
-
-	outImage, err := croper.Crop(srcOriginImage, h.croppedImagePath, request)
+	// Generate cropped image.
+	outImage, err := croper.Crop(srcOriginImage, fileName, h.croppedImagePath, request)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't crop image", err)
 		return
+	}
+
+	// Set image to cache.
+	_, removedImage := h.cache.Set(cache.Key(fileName), "")
+	//If we have removed item, we're removing from disk with cropped images
+	if removedImage != "" {
+		cleaner.RemoveCacheImages(h.originImagePath, h.croppedImagePath, fileName)
 	}
 
 	http.ServeFile(w, r, outImage)
