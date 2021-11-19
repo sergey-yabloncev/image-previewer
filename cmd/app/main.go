@@ -19,9 +19,13 @@ var (
 func main() {
 	server := http.NewServeMux()
 	server.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./storage/public"))))
+	c, err := readConfig("./configs/config.toml")
+	if err != nil {
+		log.Fatalf("cannot read config: %v", err)
+	}
 
 	rootHandler := handler.New(
-		handler.NewCropHandler(originImagePath, croppedImagePath, cache.NewCache(2)),
+		handler.NewCropHandler(originImagePath, croppedImagePath, cache.NewCache(c.Cache.Capacity)),
 		handler.NewDocHandler(),
 	)
 

@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -19,65 +18,6 @@ func TestCache(t *testing.T) {
 
 		_, ok = c.Get("bbb")
 		require.False(t, ok)
-	})
-
-	t.Run("empty cache", func(t *testing.T) {
-		c := NewCache(3)
-		var wasInCache bool
-		var key Key
-
-		wasInCache, key = c.Set("1", 100)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		wasInCache, key = c.Set("2", 200)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		wasInCache, key = c.Set("2", 300)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		wasInCache, key = c.Set("3", 300)
-		fmt.Println("--------------------")
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		wasInCache, key = c.Set("4", 400)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		wasInCache, key = c.Set("5", 500)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		wasInCache, key = c.Set("6", 600)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		wasInCache, key = c.Set("7", 700)
-		fmt.Printf("%T: %#v \n", wasInCache, wasInCache)
-		fmt.Printf("%T: %#v \n", key, key)
-		fmt.Println("--------------------")
-		fmt.Printf("%T: %#v \n", c, c)
-		fmt.Println("--------------------")
-
-		// c.Set("1", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
-		// c.Set("2", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
-		// c.Set("3", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
-		// c.Set("4", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
-		// c.Set("5", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
-		// c.Set("6", "")
-		// fmt.Printf("%T: %#v \n", c, c)
-		// fmt.Println("--------------------")
 	})
 
 	t.Run("simple", func(t *testing.T) {
