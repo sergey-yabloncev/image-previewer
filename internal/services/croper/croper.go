@@ -13,7 +13,6 @@ func Crop(pathImage, pathDir, filename string, request router.CropRequest) (stri
 	method := request.Type
 	croppedImage := path.Join(pathDir, fmt.Sprintf("%s_%s_%vx%v.jpg", filename, method, request.Width, request.Height))
 
-	// If file exists return cached image.
 	check, err := helpers.IsExists(croppedImage)
 	if err != nil {
 		return "", err
@@ -39,7 +38,6 @@ func Crop(pathImage, pathDir, filename string, request router.CropRequest) (stri
 		src = imaging.Resize(src, request.Width, request.Height, imaging.Lanczos)
 	}
 
-	// Save the resulting image as JPEG.
 	err = imaging.Save(src, croppedImage)
 	if err != nil {
 		return "", err

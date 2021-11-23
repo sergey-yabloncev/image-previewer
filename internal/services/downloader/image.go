@@ -1,4 +1,4 @@
-package uploader
+package downloader
 
 import (
 	"context"
@@ -12,10 +12,9 @@ import (
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 )
 
-func UploadImage(url, filename, pathDir string, header http.Header) (string, error) {
+func DownloadImage(url, filename, pathDir string, header http.Header) (string, error) {
 	imagePath := path.Join(pathDir, filename+".jpg")
 
-	// If file exists return cached image.
 	check, err := helpers.IsExists(imagePath)
 	if err != nil {
 		return "", err
@@ -25,7 +24,6 @@ func UploadImage(url, filename, pathDir string, header http.Header) (string, err
 		return imagePath, nil
 	}
 
-	// Request.
 	client := http.Client{}
 	ctx := context.Background()
 	cancelCtx, cancel := context.WithTimeout(ctx, time.Second*30)
@@ -47,14 +45,12 @@ func UploadImage(url, filename, pathDir string, header http.Header) (string, err
 		return "", errors.New("can't download image")
 	}
 
-	// Create file.
 	file, err := os.Create(imagePath)
 	if err != nil {
 		return "", err
 	}
 	defer file.Close()
 
-	// Write image.
 	_, err = io.Copy(file, response.Body)
 	if err != nil {
 		return "", err

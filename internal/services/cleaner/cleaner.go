@@ -7,20 +7,17 @@ import (
 )
 
 func RemoveCacheImages(originImagePath, croppedImagePath, name string) {
-	// Remove origin.
 	err := clearDir(originImagePath, name)
 	if err != nil {
 		log.Fatalf("error clear dir:")
 	}
 
-	// Remove cropped.
 	err = clearDir(croppedImagePath, name)
 	if err != nil {
 		log.Fatalf("error clear dir:")
 	}
 }
 
-// Clear dir exclude .gitignore file.
 func clearDir(dir string, fileName string) error {
 	readDirectory, err := os.Open(dir)
 	if err != nil {

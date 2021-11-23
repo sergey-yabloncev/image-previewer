@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/sergey-yabloncev/image-previewer/internal/services/downloader"
 	"log"
 	"net/http"
 	"strings"
@@ -10,7 +11,6 @@ import (
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cleaner"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/croper"
-	"github.com/sergey-yabloncev/image-previewer/internal/services/uploader"
 )
 
 type CropHandler struct {
@@ -39,24 +39,21 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		router.HTTPBadRequest(w, "Can't parse parameters", err)
 		return
 	}
-	// Generate new uniq name.
+
 	fileName := helpers.Md5String(request.URL)
-	// Upload image.
-	srcOriginImage, err := uploader.UploadImage(request.URL, fileName, h.originImagePath, r.Header)
+	srcOriginImage, err := downloader.DownloadImage(request.URL, fileName, h.originImagePath, r.Header)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't upload image", err)
 		return
 	}
-	// Generate cropped image.
+
 	outImage, err := croper.Crop(srcOriginImage, h.croppedImagePath, fileName, request)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't crop image", err)
 		return
 	}
 
-	// Set image to cache.
 	_, removedImage := h.cache.Set(cache.Key(fileName), "")
-	// If we have removed item, we're removing from disk with cropped images
 	if removedImage != "" {
 		log.Println("Images was removed:", removedImage)
 		cleaner.RemoveCacheImages(h.originImagePath, h.croppedImagePath, string(removedImage))

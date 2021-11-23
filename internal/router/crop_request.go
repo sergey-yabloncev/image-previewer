@@ -31,23 +31,10 @@ func NewCropRequest(requestURI string) (CropRequest, error) {
 		return CropRequest{}, err
 	}
 
-	url := strings.Join(path[3:], "/")
-	url = sanitizeURL(url)
-
 	return CropRequest{
 		path[0],
 		with,
 		height,
-		url,
+		strings.Join(path[3:], "/"),
 	}, nil
-}
-
-// Clear host if request has it.
-func sanitizeURL(url string) string {
-	url = strings.TrimPrefix(url, "http://")
-	url = strings.TrimPrefix(url, "https://")
-	url = strings.TrimPrefix(url, "http:/")
-	url = strings.TrimPrefix(url, "https:/")
-
-	return url
 }

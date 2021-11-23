@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
+// Clear paths with cache files before start.
 func init() {
-	// Clear paths with cache files before start.
 	err := clearDir(originImagePath)
 	if err != nil {
 		log.Fatalf("error clear dir:")

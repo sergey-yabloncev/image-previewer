@@ -13,7 +13,6 @@ func NewDocHandler() DocHandler {
 	return DocHandler{}
 }
 
-// Main resolver function.
 func (h DocHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("./templates/index.html")
 	if err != nil {

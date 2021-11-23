@@ -11,7 +11,6 @@ import (
 )
 
 var (
-	// Dirs for storage cache images.
 	originImagePath  = path.Join("storage", "public", "origin")
 	croppedImagePath = path.Join("storage", "public", "cropped")
 )

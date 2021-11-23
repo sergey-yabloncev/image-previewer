@@ -61,16 +61,15 @@ func (c *lruCache) Set(key Key, value interface{}) (isRe bool, removedKey Key) {
 
 func (c *lruCache) Get(key Key) (interface{}, bool) {
 	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	item, ok := c.items[key]
 
 	if ok {
 		c.queue.MoveToFront(item)
-		defer c.mu.Unlock()
 		return c.items[key].Value.(cacheItem).value, true
 	}
 
-	defer c.mu.Unlock()
 	return nil, false
 }
 
