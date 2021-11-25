@@ -1,16 +1,14 @@
 package handler
 
 import (
-	"github.com/sergey-yabloncev/image-previewer/internal/services/downloader"
-	"log"
-	"net/http"
-	"strings"
-
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cleaner"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/croper"
+	"github.com/sergey-yabloncev/image-previewer/internal/services/downloader"
+	"log"
+	"net/http"
 )
 
 type CropHandler struct {
@@ -29,11 +27,6 @@ func NewCropHandler(originImagePath, croppedImagePath string, cache cache.Cache)
 
 // Main resolver function.
 func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !checkExtension(r.RequestURI) {
-		router.HTTPBadRequest(w, "Can't find image", nil)
-		return
-	}
-
 	request, err := router.NewCropRequest(r.RequestURI)
 	if err != nil {
 		router.HTTPBadRequest(w, "Can't parse parameters", err)
@@ -60,9 +53,4 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeFile(w, r, outImage)
-}
-
-// Find jpg extension in request RequestURI.
-func checkExtension(url string) bool {
-	return strings.Contains(url, ".jpg") || strings.Contains(url, ".jpeg")
 }

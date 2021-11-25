@@ -38,8 +38,11 @@ func DownloadImage(url, filename, pathDir string, header http.Header) (string, e
 	if err != nil {
 		return "", err
 	}
-
 	defer response.Body.Close()
+
+	if !checkExtension(response, "image/jpeg") {
+		return "", errors.New("content type isn't image/jpeg")
+	}
 
 	if response.StatusCode != 200 {
 		return "", errors.New("can't download image")
