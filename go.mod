@@ -3,7 +3,9 @@ module github.com/sergey-yabloncev/image-previewer
 go 1.17
 
 require (
+	github.com/BurntSushi/toml v0.4.1
 	github.com/disintegration/imaging v1.6.2
+	github.com/jarcoal/httpmock v1.0.8
 	github.com/stretchr/testify v1.4.0
 )
 

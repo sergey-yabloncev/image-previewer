@@ -1,4 +1,4 @@
-package uploader
+package downloader
 
 import (
 	"context"
@@ -12,11 +12,9 @@ import (
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 )
 
-func UploadImage(url, pathDir string, header http.Header) (string, error) {
-	filename := helpers.Md5String(url)
+func DownloadImage(url, filename, pathDir string, header http.Header) (string, error) {
 	imagePath := path.Join(pathDir, filename+".jpg")
 
-	// If file exists return cached image.
 	check, err := helpers.IsExists(imagePath)
 	if err != nil {
 		return "", err
@@ -26,12 +24,11 @@ func UploadImage(url, pathDir string, header http.Header) (string, error) {
 		return imagePath, nil
 	}
 
-	// Request.
 	client := http.Client{}
 	ctx := context.Background()
 	cancelCtx, cancel := context.WithTimeout(ctx, time.Second*30)
 	defer cancel()
-	req, err := http.NewRequestWithContext(cancelCtx, "GET", "http://"+url, nil)
+	req, err := http.NewRequestWithContext(cancelCtx, http.MethodGet, "http://"+url, nil)
 	if err != nil {
 		return "", err
 	}
@@ -41,21 +38,22 @@ func UploadImage(url, pathDir string, header http.Header) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	defer response.Body.Close()
+
+	if !checkExtension(response, "image/jpeg") {
+		return "", errors.New("content type isn't image/jpeg")
+	}
 
 	if response.StatusCode != 200 {
 		return "", errors.New("can't download image")
 	}
 
-	// Create file.
 	file, err := os.Create(imagePath)
 	if err != nil {
 		return "", err
 	}
 	defer file.Close()
 
-	// Write image.
 	_, err = io.Copy(file, response.Body)
 	if err != nil {
 		return "", err

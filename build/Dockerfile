@@ -18,6 +18,4 @@ WORKDIR /app
 
 COPY --from=build /opt/app/ .
 
-COPY ./configs/config.toml .
-
-CMD ./app -config ./config.toml
+CMD ./app
