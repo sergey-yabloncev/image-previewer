@@ -11,7 +11,7 @@ import (
 
 func TestCache(t *testing.T) {
 	t.Run("empty cache", func(t *testing.T) {
-		c := NewCache(10)
+		c := NewCache(10, "", "", false)
 
 		_, ok := c.Get("aaa")
 		require.False(t, ok)
@@ -21,12 +21,12 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("simple", func(t *testing.T) {
-		c := NewCache(5)
+		c := NewCache(5, "", "", false)
 
-		wasInCache, _ := c.Set("aaa", 100)
+		wasInCache := c.Set("aaa", 100)
 		require.False(t, wasInCache)
 
-		wasInCache, _ = c.Set("bbb", 200)
+		wasInCache = c.Set("bbb", 200)
 		require.False(t, wasInCache)
 
 		val, ok := c.Get("aaa")
@@ -37,7 +37,7 @@ func TestCache(t *testing.T) {
 		require.True(t, ok)
 		require.Equal(t, 200, val)
 
-		wasInCache, _ = c.Set("aaa", 300)
+		wasInCache = c.Set("aaa", 300)
 		require.True(t, wasInCache)
 
 		val, ok = c.Get("aaa")
@@ -51,7 +51,7 @@ func TestCache(t *testing.T) {
 }
 
 func TestCacheMultithreading(t *testing.T) {
-	c := NewCache(10)
+	c := NewCache(100, "", "", false)
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 

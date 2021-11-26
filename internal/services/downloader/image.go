@@ -28,7 +28,7 @@ func DownloadImage(url, filename, pathDir string, header http.Header) (string, e
 	ctx := context.Background()
 	cancelCtx, cancel := context.WithTimeout(ctx, time.Second*30)
 	defer cancel()
-	req, err := http.NewRequestWithContext(cancelCtx, "GET", "http://"+url, nil)
+	req, err := http.NewRequestWithContext(cancelCtx, http.MethodGet, "http://"+url, nil)
 	if err != nil {
 		return "", err
 	}

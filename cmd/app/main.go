@@ -24,7 +24,15 @@ func main() {
 	}
 
 	rootHandler := handler.New(
-		handler.NewCropHandler(originImagePath, croppedImagePath, cache.NewCache(c.Cache.Capacity)),
+		handler.NewCropHandler(
+			originImagePath,
+			croppedImagePath,
+			cache.NewCache(
+				c.Cache.Capacity,
+				originImagePath,
+				croppedImagePath,
+				true,
+			)),
 		handler.NewDocHandler(),
 	)
 

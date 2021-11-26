@@ -1,4 +1,4 @@
-package cleaner
+package cache
 
 import (
 	"log"

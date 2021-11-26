@@ -1,14 +1,13 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
-	"github.com/sergey-yabloncev/image-previewer/internal/services/cleaner"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/croper"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/downloader"
-	"log"
-	"net/http"
 )
 
 type CropHandler struct {
@@ -40,16 +39,12 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.cache.Set(cache.Key(fileName), "")
+
 	outImage, err := croper.Crop(srcOriginImage, h.croppedImagePath, fileName, request)
 	if err != nil {
 		router.HTTPInternalServerError(w, "Can't crop image", err)
 		return
-	}
-
-	_, removedImage := h.cache.Set(cache.Key(fileName), "")
-	if removedImage != "" {
-		log.Println("Images was removed:", removedImage)
-		cleaner.RemoveCacheImages(h.originImagePath, h.croppedImagePath, string(removedImage))
 	}
 
 	http.ServeFile(w, r, outImage)
