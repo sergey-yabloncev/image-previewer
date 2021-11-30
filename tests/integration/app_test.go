@@ -47,6 +47,10 @@ func (s *AppSuite) TestBadRequest() {
 			name:  "NotExistServer",
 			input: fmt.Sprintf("%s/fill/200/300/%s/original_1024x504.jpg", AppUrl, "not-exist.server"),
 		},
+		{
+			name:  "WithOutRequireParams",
+			input: fmt.Sprintf("%s/fill/%s/original_1024x504.jpg", AppUrl, MockUrl),
+		},
 	}
 
 	for _, tc := range tests {
