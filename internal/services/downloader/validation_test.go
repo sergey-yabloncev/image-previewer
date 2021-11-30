@@ -30,12 +30,14 @@ func TestIsExists(t *testing.T) {
 		{contentType: "", input: "", expected: true},
 	}
 
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.contentType, func(t *testing.T) {
-			httpmock.Activate()
-			defer httpmock.DeactivateAndReset()
-			httpmock.RegisterResponder(http.MethodGet, URL, customResponder(200, nil, tc.contentType))
+			httpmock.Reset()
+			httpmock.RegisterResponder(http.MethodGet, URL, customResponder(http.StatusOK, nil, tc.contentType))
 
 			request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, URL, nil)
 			if err != nil {
