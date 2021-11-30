@@ -16,7 +16,7 @@ make run
 127.0.0.1:8080
 ```
 
-##Использование
+## Использование
 
 Пример для запроса:
 
@@ -28,11 +28,11 @@ http://localhost:8080/fill/200/300/raw.githubusercontent.com/OtusGolang/final_pr
 - `raw.githubusercontent.com/OtusGolang/final_project/master/examples/image-previewer/_gopher_original_1024x504.jpg` исходное изображение
 
 
-##Конфигурация docker
+## Конфигурация docker
 
 Пример конфигурации для запуска сервиса `example.env`
 
-##Конфигурация  сервиса
+## Конфигурация  сервиса
 
 Конфигурационный файл находится по следующему пути: `configs/config.toml`
 

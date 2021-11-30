@@ -12,6 +12,11 @@ import (
 	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 )
 
+var (
+	ErrorNotJpeg      = errors.New("content type isn't image/jpeg")
+	ErrorCantDownload = errors.New("can't download image")
+)
+
 func DownloadImage(url, filename, pathDir string, header http.Header) (string, error) {
 	imagePath := path.Join(pathDir, filename+".jpg")
 
@@ -41,11 +46,11 @@ func DownloadImage(url, filename, pathDir string, header http.Header) (string, e
 	defer response.Body.Close()
 
 	if !checkExtension(response, "image/jpeg") {
-		return "", errors.New("content type isn't image/jpeg")
+		return "", ErrorNotJpeg
 	}
 
 	if response.StatusCode != 200 {
-		return "", errors.New("can't download image")
+		return "", ErrorCantDownload
 	}
 
 	file, err := os.Create(imagePath)

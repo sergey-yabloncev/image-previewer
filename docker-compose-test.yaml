@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: ${DOCKER_APP_NAME:-project}-nginx
+    ports:
+      - "8070:80"
+    volumes:
+      - ./tests/data:/share
+      - ./tests/nginx/share.conf:/etc/nginx/conf.d/default.conf
+
+  integration-tests:
+    image: golang:latest
+    container_name: ${DOCKER_APP_NAME:-project}-integration-tests
+    volumes:
+      - ./:/app/
+    working_dir: /app
+    command: go test -v ./tests/integration/...
+    depends_on:
+      - nginx
+      - app

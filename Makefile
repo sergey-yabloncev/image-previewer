@@ -17,6 +17,10 @@ build:
 test:
 	go test -race -count 100 ./internal/...
 
+integration-test-run:
+	docker-compose -f docker-compose.yaml -f docker-compose-test.yaml up --build --abort-on-container-exit --exit-code-from integration-tests
+	docker-compose -f docker-compose.yaml -f docker-compose-test.yaml down
+
 down:
 	docker-compose down
 

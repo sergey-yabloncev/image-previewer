@@ -1,21 +1,25 @@
 package cache
 
 import (
-	"log"
+	"errors"
 	"os"
 	"strings"
 )
 
-func RemoveCacheImages(originImagePath, croppedImagePath, name string) {
+var ErrorClearDir = errors.New("error clear dir")
+
+func RemoveCacheImages(originImagePath, croppedImagePath, name string) error {
 	err := clearDir(originImagePath, name)
 	if err != nil {
-		log.Fatalf("error clear dir:")
+		return ErrorClearDir
 	}
 
 	err = clearDir(croppedImagePath, name)
 	if err != nil {
-		log.Fatalf("error clear dir:")
+		return ErrorClearDir
 	}
+
+	return nil
 }
 
 func clearDir(dir string, fileName string) error {
