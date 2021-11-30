@@ -1,14 +1,15 @@
-package cache
+package cache_test
 
 import (
 	"testing"
 
+	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"github.com/stretchr/testify/require"
 )
 
 func TestList(t *testing.T) {
 	t.Run("empty list", func(t *testing.T) {
-		l := NewList()
+		l := cache.NewList()
 
 		require.Equal(t, 0, l.Len())
 		require.Nil(t, l.Front())
@@ -16,7 +17,7 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("complex", func(t *testing.T) {
-		l := NewList()
+		l := cache.NewList()
 
 		l.PushFront(10) // [10]
 		l.PushBack(20)  // [10, 20]

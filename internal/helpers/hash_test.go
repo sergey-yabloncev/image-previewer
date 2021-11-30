@@ -1,8 +1,9 @@
-package helpers
+package helpers_test
 
 import (
 	"testing"
 
+	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,7 +21,7 @@ func TestMd5String(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.input, func(t *testing.T) {
-			require.Equal(t, tc.expected, Md5String(tc.input))
+			require.Equal(t, tc.expected, helpers.Md5String(tc.input))
 		})
 	}
 }

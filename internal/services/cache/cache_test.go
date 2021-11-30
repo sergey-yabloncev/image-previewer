@@ -1,14 +1,15 @@
-package cache
+package cache_test
 
 import (
 	"testing"
 
+	"github.com/sergey-yabloncev/image-previewer/internal/services/cache"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCache(t *testing.T) {
 	t.Run("empty cache", func(t *testing.T) {
-		c := NewCache(10, "", "", false)
+		c := cache.NewCache(10, "", "", false)
 
 		_, ok := c.Get("aaa")
 		require.False(t, ok)
@@ -18,7 +19,7 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("simple", func(t *testing.T) {
-		c := NewCache(5, "", "", false)
+		c := cache.NewCache(5, "", "", false)
 
 		wasInCache := c.Set("aaa", 100)
 		require.False(t, wasInCache)
