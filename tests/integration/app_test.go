@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	MockUrl = "nginx"
-	AppUrl  = "http://app:8080"
+	MockURL = "nginx"
+	AppURL  = "http://app:8080"
 )
 
 type AppSuite struct {
@@ -24,6 +24,7 @@ type AppSuite struct {
 
 func (s *AppSuite) SetupSuite() {
 	s.client = &http.Client{}
+	s.ctx = context.Background()
 }
 
 func TestAppSuite(t *testing.T) {
@@ -37,25 +38,25 @@ func (s *AppSuite) TestBadRequest() {
 	}{
 		{
 			name:  "NotImageFile",
-			input: fmt.Sprintf("%s/fill/200/300/%s/test.json", AppUrl, MockUrl),
+			input: fmt.Sprintf("%s/fill/200/300/%s/test.json", AppURL, MockURL),
 		},
 		{
 			name:  "NotFoundImage",
-			input: fmt.Sprintf("%s/fill/200/300/%s/not-found-file.pdf", AppUrl, MockUrl),
+			input: fmt.Sprintf("%s/fill/200/300/%s/not-found-file.pdf", AppURL, MockURL),
 		},
 		{
 			name:  "NotExistServer",
-			input: fmt.Sprintf("%s/fill/200/300/%s/original_1024x504.jpg", AppUrl, "not-exist.server"),
+			input: fmt.Sprintf("%s/fill/200/300/%s/original_1024x504.jpg", AppURL, "not-exist.server"),
 		},
 		{
 			name:  "WithOutRequireParams",
-			input: fmt.Sprintf("%s/fill/%s/original_1024x504.jpg", AppUrl, MockUrl),
+			input: fmt.Sprintf("%s/fill/%s/original_1024x504.jpg", AppURL, MockURL),
 		},
 	}
 
 	for _, tc := range tests {
 		s.Run(tc.name, func() {
-			req, err := http.NewRequest(http.MethodGet, tc.input, nil)
+			req, err := http.NewRequestWithContext(s.ctx, http.MethodGet, tc.input, nil)
 			s.Require().NoError(err)
 
 			response, err := s.client.Do(req)
@@ -99,9 +100,9 @@ func (s *AppSuite) TestResize() {
 
 	for _, tc := range tests {
 		s.Run(fmt.Sprintf("%vx%v", tc.with, tc.height), func() {
-			req, err := http.NewRequest(
+			req, err := http.NewRequestWithContext(s.ctx,
 				http.MethodGet,
-				fmt.Sprintf("%s/fill/%v/%v/%s/original_1024x504.jpg", AppUrl, tc.with, tc.height, MockUrl),
+				fmt.Sprintf("%s/fill/%v/%v/%s/original_1024x504.jpg", AppURL, tc.with, tc.height, MockURL),
 				nil,
 			)
 
@@ -114,6 +115,7 @@ func (s *AppSuite) TestResize() {
 			s.Require().NoError(err)
 
 			image, _, err := image.DecodeConfig(response.Body)
+			s.Require().NoError(err)
 
 			s.Require().Equal(response.StatusCode, http.StatusOK)
 			s.Require().Equal(tc.with, image.Width)
@@ -123,9 +125,9 @@ func (s *AppSuite) TestResize() {
 }
 
 func (s *AppSuite) TestCacheImage() {
-	req, err := http.NewRequest(
+	req, err := http.NewRequestWithContext(s.ctx,
 		http.MethodGet,
-		fmt.Sprintf("%s/fill/600/400/%s/original_1024x504.jpg", AppUrl, MockUrl),
+		fmt.Sprintf("%s/fill/600/400/%s/original_1024x504.jpg", AppURL, MockURL),
 		nil,
 	)
 
@@ -136,5 +138,4 @@ func (s *AppSuite) TestCacheImage() {
 
 	defer response.Body.Close()
 	s.Require().NoError(err)
-
 }
