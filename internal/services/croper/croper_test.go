@@ -32,14 +32,13 @@ func TestCropImage(t *testing.T) {
 	request := mockCropRequest(600, 400)
 
 	img, err := croper.Crop(TestImage, tmpDir, "test", request)
+
 	require.NoError(t, err)
 
 	file, err := os.Open(img)
 	defer func(file *os.File) {
 		err := file.Close()
-		if err != nil {
-
-		}
+		require.NoError(t, err)
 	}(file)
 	require.NoError(t, err)
 
