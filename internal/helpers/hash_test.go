@@ -21,7 +21,7 @@ func TestMd5String(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.input, func(t *testing.T) {
-			require.Equal(t, tc.expected, helpers.Md5String(tc.input))
+			require.Equal(t, tc.expected, helpers.Hash(tc.input))
 		})
 	}
 }

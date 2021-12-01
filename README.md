@@ -44,5 +44,6 @@ http://localhost:8080/fill/200/300/raw.githubusercontent.com/OtusGolang/final_pr
 | ------ | ------ |
 | Imaging | https://github.com/disintegration/imaging |
 | toml | https://github.com/BurntSushi/toml |
+| httpmock | https://github.com/jarcoal/httpmock |
 
 

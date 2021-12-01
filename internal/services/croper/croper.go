@@ -1,30 +1,16 @@
 package croper
 
 import (
-	"fmt"
-	"path"
-
 	"github.com/disintegration/imaging"
-	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
 )
 
-func Crop(pathImage, pathDir, filename string, request router.CropRequest) (string, error) {
+func Crop(pathImage, filename string, request router.CropRequest) error {
 	method := request.Type
-	croppedImage := path.Join(pathDir, fmt.Sprintf("%s_%s_%vx%v.jpg", filename, method, request.Width, request.Height))
-
-	check, err := helpers.IsExists(croppedImage)
-	if err != nil {
-		return "", err
-	}
-
-	if check {
-		return croppedImage, nil
-	}
 
 	src, err := imaging.Open(pathImage)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	switch method {
@@ -38,10 +24,10 @@ func Crop(pathImage, pathDir, filename string, request router.CropRequest) (stri
 		src = imaging.Resize(src, request.Width, request.Height, imaging.Lanczos)
 	}
 
-	err = imaging.Save(src, croppedImage)
+	err = imaging.Save(src, filename)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return croppedImage, nil
+	return nil
 }

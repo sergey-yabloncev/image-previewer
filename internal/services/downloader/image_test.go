@@ -23,7 +23,7 @@ func customResponder(statusCode int) httpmock.Responder {
 	return httpmock.ResponderFromResponse(response)
 }
 
-func TestDownloadImageWithCache(t *testing.T) {
+func TestDownloadImage(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(http.MethodGet, URL, customResponder(http.StatusOK))
@@ -32,27 +32,17 @@ func TestDownloadImageWithCache(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	require.NoError(t, err)
-	// First
-	img, err := downloader.DownloadImage(DOMAIN, "test", tmpDir, nil)
-	require.NoError(t, err)
-	require.Contains(t, img, "test")
 
-	isExist, err := helpers.IsExists(tmpDir + "/test.jpg")
+	image := tmpDir + "/test.jpg"
+
+	err = downloader.DownloadImage(DOMAIN, image, nil)
+	require.NoError(t, err)
+
+	isExist, err := helpers.IsExists(image)
 	require.NoError(t, err)
 	require.True(t, isExist)
 
 	files, _ := os.ReadDir(tmpDir)
-	require.Equal(t, 1, len(files))
-	// Second test cache image in disk
-	img, err = downloader.DownloadImage(DOMAIN, "test", tmpDir, nil)
-	require.NoError(t, err)
-	require.Contains(t, img, "test")
-
-	isExist, err = helpers.IsExists(tmpDir + "/test.jpg")
-	require.NoError(t, err)
-	require.True(t, isExist)
-
-	files, _ = os.ReadDir(tmpDir)
 	require.Equal(t, 1, len(files))
 }
 
@@ -61,7 +51,7 @@ func TestNotImage(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(http.MethodGet, URL, httpmock.NewStringResponder(http.StatusOK, ""))
 
-	_, err := downloader.DownloadImage(DOMAIN, "test", "./", nil)
+	err := downloader.DownloadImage(DOMAIN, "test.jpg", nil)
 	require.Error(t, err)
 }
 
@@ -83,7 +73,7 @@ func TestBadStatusResponse(t *testing.T) {
 			httpmock.Reset()
 			httpmock.RegisterResponder(http.MethodGet, URL, customResponder(tc.status))
 
-			_, err := downloader.DownloadImage(DOMAIN, "test", "./", nil)
+			err := downloader.DownloadImage(DOMAIN, "test.jpg", nil)
 			require.Error(t, err)
 		})
 	}

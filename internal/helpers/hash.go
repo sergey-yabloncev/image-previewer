@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 )
 
-func Md5String(in string) string {
+func Hash(in string) string {
 	if in == "" {
 		return ""
 	}

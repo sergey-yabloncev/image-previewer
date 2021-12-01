@@ -6,10 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
 	"time"
-
-	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 )
 
 var (
@@ -17,52 +14,41 @@ var (
 	ErrorCantDownload = errors.New("can't download image")
 )
 
-func DownloadImage(url, filename, pathDir string, header http.Header) (string, error) {
-	imagePath := path.Join(pathDir, filename+".jpg")
-
-	check, err := helpers.IsExists(imagePath)
-	if err != nil {
-		return "", err
-	}
-
-	if check {
-		return imagePath, nil
-	}
-
+func DownloadImage(url, fileName string, header http.Header) error {
 	client := http.Client{}
 	ctx := context.Background()
 	cancelCtx, cancel := context.WithTimeout(ctx, time.Second*30)
 	defer cancel()
 	req, err := http.NewRequestWithContext(cancelCtx, http.MethodGet, "http://"+url, nil)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	req.Header = header
 	response, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer response.Body.Close()
 
 	if !checkExtension(response, "image/jpeg") {
-		return "", ErrorNotJpeg
+		return ErrorNotJpeg
 	}
 
-	if response.StatusCode != 200 {
-		return "", ErrorCantDownload
+	if response.StatusCode != http.StatusOK {
+		return ErrorCantDownload
 	}
 
-	file, err := os.Create(imagePath)
+	file, err := os.Create(fileName)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer file.Close()
 
 	_, err = io.Copy(file, response.Body)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return imagePath, nil
+	return nil
 }
