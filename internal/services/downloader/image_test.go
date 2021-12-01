@@ -1,13 +1,14 @@
 package downloader_test
 
 import (
-	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"os"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
+	"github.com/sergey-yabloncev/image-previewer/internal/helpers"
 	"github.com/sergey-yabloncev/image-previewer/internal/services/downloader"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -22,7 +23,7 @@ func customResponder(statusCode int) httpmock.Responder {
 	return httpmock.ResponderFromResponse(response)
 }
 
-func TestDownloadImage(t *testing.T) {
+func TestDownloadImageWithCache(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(http.MethodGet, URL, customResponder(http.StatusOK))
@@ -31,10 +32,28 @@ func TestDownloadImage(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	require.NoError(t, err)
-
+	// First
 	img, err := downloader.DownloadImage(DOMAIN, "test", tmpDir, nil)
 	require.NoError(t, err)
 	require.Contains(t, img, "test")
+
+	isExist, err := helpers.IsExists(tmpDir + "/test.jpg")
+	require.NoError(t, err)
+	require.True(t, isExist)
+
+	files, _ := os.ReadDir(tmpDir)
+	require.Equal(t, 1, len(files))
+	// Second test cache image in disk
+	img, err = downloader.DownloadImage(DOMAIN, "test", tmpDir, nil)
+	require.NoError(t, err)
+	require.Contains(t, img, "test")
+
+	isExist, err = helpers.IsExists(tmpDir + "/test.jpg")
+	require.NoError(t, err)
+	require.True(t, isExist)
+
+	files, _ = os.ReadDir(tmpDir)
+	require.Equal(t, 1, len(files))
 }
 
 func TestNotImage(t *testing.T) {
