@@ -15,7 +15,7 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/app
 
 test:
-	go test -race -count 100 ./internal/...
+	go test -race -count 10 ./internal/...
 
 integration-test-run:
 	docker-compose -f docker-compose.yaml -f docker-compose-test.yaml up --build --abort-on-container-exit --exit-code-from integration-tests
@@ -28,4 +28,4 @@ run:
 	docker-compose build
 	docker-compose up -d
 
-.PHONY: run test lint format down
+.PHONY: run test lint format down build

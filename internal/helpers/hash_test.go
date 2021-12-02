@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMd5String(t *testing.T) {
+func TestHashString(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected string

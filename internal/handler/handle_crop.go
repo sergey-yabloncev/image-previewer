@@ -29,7 +29,7 @@ func NewCropHandler(originImagePath, croppedImagePath string, cache cache.Cache)
 
 // Main resolver function.
 func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	request, err := router.NewCropRequest(r.RequestURI)
+	request, err := router.NewCropRequest(r.URL.Path)
 	if err != nil {
 		router.HTTPBadRequest(w, "Can't parse parameters", err)
 		return
@@ -47,7 +47,10 @@ func (h CropHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.cache.Set(cache.Key(fileName), "")
 	}
 
-	croppedImage := path.Join(h.croppedImagePath, fmt.Sprintf("%s_%s_%vx%v.jpg", fileName, request.Type, request.Width, request.Height))
+	croppedImage := path.Join(
+		h.croppedImagePath,
+		fmt.Sprintf("%s_%s_%vx%v.jpg", fileName, request.Type, request.Width, request.Height),
+	)
 	cacheValue, ok := h.cache.Get(cache.Key(fileName))
 	if ok {
 		if strings.Contains(fmt.Sprint(cacheValue), croppedImage) {
