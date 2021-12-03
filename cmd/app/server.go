@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/sergey-yabloncev/image-previewer/internal/handler"
 	"github.com/sergey-yabloncev/image-previewer/internal/router"
@@ -10,8 +14,8 @@ import (
 )
 
 func Server(config Config) {
-	server := http.NewServeMux()
-	server.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./storage/public"))))
+	mux := http.NewServeMux()
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./storage/public"))))
 
 	rootHandler := handler.New(
 		handler.NewCropHandler(
@@ -26,8 +30,24 @@ func Server(config Config) {
 		handler.NewDocHandler(),
 	)
 
-	server.HandleFunc("/", rootHandler.ServeHTTP)
+	mux.HandleFunc("/", rootHandler.ServeHTTP)
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router.LoggerMiddleware(mux),
+	}
 
 	log.Println("start server to http://localhost:8080/")
-	log.Fatal(http.ListenAndServe(":8080", router.LoggerMiddleware(server)))
+	go func() {
+		log.Fatal(server.ListenAndServe())
+	}()
+
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt)
+	<-sigint
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	server.Shutdown(ctx)
 }
